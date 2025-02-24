@@ -6,39 +6,14 @@ import { Canvas, useFrame } from "@react-three/fiber"
 import { useLoader } from "@react-three/fiber"
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
 
-import { Backdrop } from "@react-three/drei"
-
 import { easing } from "maath"
-
-const simplify = true
 
 function Background() {
 	return (
-		<>
-			<mesh position={[0, 20, 0]} receiveShadow>
-				<boxGeometry args={[100, 40, 40]} />
-				<meshStandardMaterial side={THREE.BackSide} />
-			</mesh>
-			<Backdrop
-				scale={[100, 5, 5]}
-				position={[0, 0, -18]}
-				floor={5} // Stretches the floor segment, 0.25 by default
-				segments={20} // Mesh-resolution, 20 by default
-				receiveShadow={true}
-			>
-				<meshStandardMaterial color="white" />
-			</Backdrop>
-			<Backdrop
-				scale={[100, 5, 5]}
-				position={[0, 0, 18]}
-				rotation={[0, Math.PI, 0]}
-				floor={5} // Stretches the floor segment, 0.25 by default
-				segments={20} // Mesh-resolution, 20 by default
-				receiveShadow={true}
-			>
-				<meshStandardMaterial color="white" />
-			</Backdrop>
-		</>
+		<mesh position={[0, 20, 0]} receiveShadow>
+			<boxGeometry args={[100, 40, 40]} />
+			<meshStandardMaterial side={THREE.BackSide} />
+		</mesh>
 	)
 }
 
@@ -61,40 +36,6 @@ function Lighting() {
 
 function Computer() {
 	const model = useLoader(GLTFLoader, "/computer/scene.gltf")
-
-	if (simplify)
-		return (
-			<mesh position={[0, 1.5, 0]} castShadow>
-				<boxGeometry args={[3, 3, 3]} />
-				<meshStandardMaterial />
-			</mesh>
-		)
-
-	model.scene.traverse((child) => {
-		if ((child as THREE.Mesh).isMesh) {
-			const mesh = child as THREE.Mesh
-			mesh.castShadow = true
-		}
-	})
-
-	return (
-		<mesh position={[0, 0, 0]} castShadow>
-			<primitive object={model.scene} />
-			<meshStandardMaterial />
-		</mesh>
-	)
-}
-
-function Mailbox() {
-	const model = useLoader(GLTFLoader, "/computer/scene.gltf")
-
-	if (simplify)
-		return (
-			<mesh position={[0, 1.5, 0]} castShadow>
-				<boxGeometry args={[3, 3, 3]} />
-				<meshStandardMaterial />
-			</mesh>
-		)
 
 	model.scene.traverse((child) => {
 		if ((child as THREE.Mesh).isMesh) {
@@ -122,7 +63,6 @@ export default function Scene() {
 			<CameraRig />
 			<Lighting />
 			<Computer />
-			<Mailbox />
 			<Background />
 		</Canvas>
 	)
