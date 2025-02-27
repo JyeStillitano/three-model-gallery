@@ -1,0 +1,11 @@
+Model Information:
+* title:	Original Gameboy
+* source:	https://sketchfab.com/3d-models/original-gameboy-8c63084ac04e467788002c30dc63a038
+* author:	Richard Vo (https://sketchfab.com/richardphong1)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Original Gameboy" (https://sketchfab.com/3d-models/original-gameboy-8c63084ac04e467788002c30dc63a038) by Richard Vo (https://sketchfab.com/richardphong1) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

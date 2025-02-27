@@ -2,74 +2,70 @@
 
 import * as THREE from "three"
 
-import { Canvas, useFrame } from "@react-three/fiber"
+import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import { useLoader } from "@react-three/fiber"
+import { Text } from "@react-three/drei"
+
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
 
-import { Backdrop } from "@react-three/drei"
+import { Perf } from "r3f-perf"
 
 import { easing } from "maath"
 
-const simplify = true
+// Easing Camera - Look At Mouse
+function Camera() {
+	const targetPosition: THREE.Vector3 = new THREE.Vector3(0, 0, 0)
 
+	useFrame((state, delta) => {
+		targetPosition.set(
+			1 + (state.pointer.x * state.viewport.width) / 3,
+			(20 + state.pointer.y) / 2,
+			15,
+		)
+
+		easing.damp3(state.camera.position, targetPosition, 0.5, delta)
+		state.camera.lookAt(0, 3, 0)
+	})
+	return <></>
+}
+
+// Backdrop / Floor
 function Background() {
 	return (
 		<>
 			<mesh position={[0, 20, 0]} receiveShadow>
 				<boxGeometry args={[100, 40, 40]} />
-				<meshStandardMaterial side={THREE.BackSide} />
+				<meshStandardMaterial side={THREE.BackSide} color="white" />
 			</mesh>
-			<Backdrop
-				scale={[100, 5, 5]}
-				position={[0, 0, -18]}
-				floor={5} // Stretches the floor segment, 0.25 by default
-				segments={20} // Mesh-resolution, 20 by default
-				receiveShadow={true}
-			>
-				<meshStandardMaterial color="white" />
-			</Backdrop>
-			<Backdrop
-				scale={[100, 5, 5]}
-				position={[0, 0, 18]}
-				rotation={[0, Math.PI, 0]}
-				floor={5} // Stretches the floor segment, 0.25 by default
-				segments={20} // Mesh-resolution, 20 by default
-				receiveShadow={true}
-			>
-				<meshStandardMaterial color="white" />
-			</Backdrop>
 		</>
 	)
 }
 
+// Ambient and point lighting.
 function Lighting() {
+	// TODO: simpler shadows for mobile.
+
 	return (
 		<>
-			<ambientLight intensity={0.6} />
+			<ambientLight intensity={0.3} />
 			<pointLight
 				position={[3, 5, 3]}
-				intensity={100}
+				intensity={40}
 				distance={20}
 				decay={2}
 				castShadow
-				shadow-mapSize-width={2048} // Increase resolution
-				shadow-mapSize-height={2048}
+				shadow-mapSize-width={2048} // Increase shadow resolution
+				shadow-mapSize-height={2048} // Increase shadow resolution
 			/>
 		</>
 	)
 }
 
-function Computer() {
-	const model = useLoader(GLTFLoader, "/computer/scene.gltf")
+function Gameboy() {
+	// Load gameboy model.
+	const model = useLoader(GLTFLoader, "/gameboy/scene.gltf")
 
-	if (simplify)
-		return (
-			<mesh position={[0, 1.5, 0]} castShadow>
-				<boxGeometry args={[3, 3, 3]} />
-				<meshStandardMaterial />
-			</mesh>
-		)
-
+	// Configure shadows for all meshes.
 	model.scene.traverse((child) => {
 		if ((child as THREE.Mesh).isMesh) {
 			const mesh = child as THREE.Mesh
@@ -77,37 +73,70 @@ function Computer() {
 		}
 	})
 
+	// Scale and return primitive object.
 	return (
-		<mesh position={[0, 0, 0]} castShadow>
+		<mesh
+			position={[0, 3.8, 0]}
+			rotation={[0, Math.PI, 0]}
+			scale={[0.5, 0.5, 0.5]}
+			castShadow
+		>
 			<primitive object={model.scene} />
-			<meshStandardMaterial />
 		</mesh>
 	)
 }
 
-function Mailbox() {
-	const model = useLoader(GLTFLoader, "/computer/scene.gltf")
-
-	if (simplify)
-		return (
-			<mesh position={[0, 1.5, 0]} castShadow>
-				<boxGeometry args={[3, 3, 3]} />
-				<meshStandardMaterial />
-			</mesh>
-		)
-
-	model.scene.traverse((child) => {
-		if ((child as THREE.Mesh).isMesh) {
-			const mesh = child as THREE.Mesh
-			mesh.castShadow = true
-		}
-	})
-
+function Information() {
 	return (
-		<mesh position={[0, 0, 0]} castShadow>
-			<primitive object={model.scene} />
-			<meshStandardMaterial />
-		</mesh>
+		<>
+			<Text
+				color="white"
+				font="/fonts/AtkinsonHyperlegibleMono-VariableFont_wght.ttf"
+				fontSize={2}
+				anchorX="center"
+				position={[0, 10, -2]}
+				rotation={[-0.5, 0, 0]}
+			>
+				Nintendo Gameboy
+			</Text>
+			<Text
+				color="white"
+				font="/fonts/AtkinsonHyperlegibleMono-VariableFont_wght.ttf"
+				fontSize={0.5}
+				anchorX="center"
+				position={[-7.5, 5, 0.75]}
+				rotation={[-0.5, 0, 0]}
+				maxWidth={5}
+			>
+				Now you can have that exciting Nintendo action anywhere with the new
+				GAME BOY video system. Just pop it in your pocket and pull it out
+				anytime.
+			</Text>
+			<Text
+				color="white"
+				font="/fonts/AtkinsonHyperlegibleMono-VariableFont_wght.ttf"
+				fontSize={0.5}
+				anchorX="center"
+				position={[6.5, 5, 0.75]}
+				rotation={[-0.5, 0, 0]}
+				maxWidth={7}
+			>
+				With a video link that hooks up to another GAME BOY system for 2-player
+				competition, stereo headphones, external speaker, battery and Tetris
+				cartridge, you can take the GAME BOY to the beach, park or playground.
+			</Text>
+
+			<Text
+				color="white"
+				font="/fonts/AtkinsonHyperlegibleMono-VariableFont_wght.ttf"
+				fontSize={1.75}
+				anchorX="center"
+				position={[0, 0.1, 3.5]}
+				rotation={[-Math.PI / 2, 0, 0]}
+			>
+				Compact Game System
+			</Text>
+		</>
 	)
 }
 
@@ -115,32 +144,17 @@ export default function Scene() {
 	// Camera Controller
 	// https://codesandbox.io/p/sandbox/bst0cy?file=%2Fsrc%2FApp.js%3A40%2C51-40%2C59
 
+	// Good example of decreasing quality on demand:
+	// https://codesandbox.io/p/sandbox/szj6p7?file=%2Fsrc%2FApp.js%3A111%2C16-111%2C25
+
 	return (
 		<Canvas shadows>
-			{/* <PerspectiveCamera makeDefault position={[0, 5, 5]} zoom={0.3} /> */}
-			{/* <OrbitControls enablePan={false} enableZoom={false} /> */}
-			<CameraRig />
+			<Camera />
 			<Lighting />
-			<Computer />
-			<Mailbox />
+			<Gameboy />
+			<Information />
 			<Background />
+			<Perf position="top-right" />
 		</Canvas>
 	)
-}
-
-function CameraRig() {
-	useFrame((state, delta) => {
-		easing.damp3(
-			state.camera.position,
-			[
-				-1 + (state.pointer.x * state.viewport.width) / 3,
-				(15 + state.pointer.y) / 2,
-				10,
-			],
-			0.5,
-			delta,
-		)
-		state.camera.lookAt(0, 0, 0)
-	})
-	return <></>
 }
