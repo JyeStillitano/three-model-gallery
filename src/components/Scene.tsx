@@ -2,13 +2,11 @@
 
 import * as THREE from "three"
 
-import { Canvas, useFrame, useThree } from "@react-three/fiber"
+import { Canvas, useFrame } from "@react-three/fiber"
 import { useLoader } from "@react-three/fiber"
 import { Text } from "@react-three/drei"
 
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
-
-import { Perf } from "r3f-perf"
 
 import { easing } from "maath"
 
