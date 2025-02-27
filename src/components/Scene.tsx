@@ -154,7 +154,7 @@ export default function Scene() {
 			<Gameboy />
 			<Information />
 			<Background />
-			<Perf position="top-right" />
+			{/* <Perf position="top-right" /> */}
 		</Canvas>
 	)
 }
